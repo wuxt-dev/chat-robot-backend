@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="//unpkg.com/element-plus@2.1.8/dist/index.css" />
+    <link rel="stylesheet" href="./style.css" />
+    <script src="https://unpkg.com/vue@3.2.31"></script>
+    <script src="//unpkg.com/element-plus@2.1.8"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <title>Socket.IO chat</title>
+</head>
+
+<body>
+    <div class="container" id="app">
+        <el-scrollbar ref="msgBox" height="600px">
+            <p v-for="(item, index) in historyMsg" :key="index" class="message" :class="isMyMessage(item.name)">
+                {{item.name}}：{{item.msg}}
+            </p>
+        </el-scrollbar>
+        <el-row>
+            <el-col :span="20">
+                <el-input autocomplete="off" v-model="message" @keyup.enter="sendMessage" />
+            </el-col>
+            <el-col :span="4">
+                <el-button type="primary" @click="sendMessage" class="button">Send</el-button>
+            </el-col>
+        </el-row>
+    </div>
+
+    <script type="module">
+        const App = {
+            data() {
+                return {
+                    message: '',
+                    historyMsg: [],
+                    socket: undefined,
+                }
+            },
+            mounted() {
+                this.socket = io()
+                this.socket.on('chat message', (msg) => {
+                    this.historyMsg.push(msg)
+                    this.$nextTick(() => {
+                        this.$refs.msgBox.setScrollTop(this.$refs.msgBox.wrap$.scrollHeight)
+                    })
+                })
+            },
+            methods: {
+                sendMessage() {
+                    if (this.message) {
+                        this.historyMsg.push({
+                            name: 'you',
+                            msg: this.message
+                        })
+                        this.$nextTick(() => {
+                            this.$refs.msgBox.setScrollTop(this.$refs.msgBox.wrap$.scrollHeight)
+                        })
+                        this.socket.emit('chat message', this.message)
+                        this.message = ''
+                    }
+                },
+                isMyMessage(name) {
+                    if (name === 'you') return 'my-message'
+                    return ''
+                },
+            }
+        }
+        const app = Vue.createApp(App)
+        app.use(ElementPlus)
+        app.mount('#app')
+    </script>
+</body>
+
+</html>

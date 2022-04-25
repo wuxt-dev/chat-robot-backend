@@ -1,0 +1,37 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  width: 50%;
+  height: 100%;
+  margin: 50px auto;
+  border: 2px solid var(--el-color-primary);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  margin: 10px;
+  padding: 10px 10px;
+  justify-content: start;
+  text-align: center;
+  border-radius: 4px;
+  background: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
+}
+.my-message {
+  justify-content: end;
+  background: var(--el-color-danger-light-9);
+  color: var(--el-color-danger);
+}
+
+.button {
+  width: 100%;
+}
